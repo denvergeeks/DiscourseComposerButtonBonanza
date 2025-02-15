@@ -1,0 +1,34 @@
+//  This file is part of ComposerButtonBonanza.
+//
+//  Copyright 2025 Matt Marjanovic
+//
+//  ComposerButtonBonanza is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU General Public License as published
+//  by the Free Software Foundation; either version 3 of the License, or any
+//  later version.
+//
+//  ComposerButtonBonanza is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+//  Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License along
+//  with ComposerButtonBonanza.  If not, see <https://www.gnu.org/licenses/>.
+
+// This matches our javascript CBBKEY value.
+$CBBKEY: ComposerButtonBonanza;
+
+// This matches our javascript makeButtonIdentifier() function.
+@function button-identifier($button) {
+    @return $CBBKEY + -btn- + $button;
+}
+
+// This reflects the behavior of the Toolbar.addButton() method.
+@function toolbar-button-selector($button) {
+    @return ".#{button-identifier($button)}";
+}
+
+// This reflects the behavior of the PluginApi.addPopupMenuOption() method.
+@function popup-button-selector($button) {
+    @return '[data-name="#{button-identifier($button)}"]';
+}

@@ -1,0 +1,271 @@
+#
+#  This file is part of ComposerButtonBonanza.
+#
+#  Copyright 2025 Matt Marjanovic
+#
+#  ComposerButtonBonanza is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License as published
+#  by the Free Software Foundation; either version 3 of the License, or any
+#  later version.
+#
+#  ComposerButtonBonanza is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+#  Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License along
+#  with ComposerButtonBonanza.  If not, see <https://www.gnu.org/licenses/>.
+#
+buttons:
+  type: objects
+  schema:
+    name: button
+    identifier: name
+    properties:
+      name:
+        type: string
+        required: true
+      svg_icon:
+        type: string
+      nonIcon:
+        type: string
+      title:
+        type: string
+      popupHover:
+        type: string
+      action:
+        required: true
+        type: enum
+        choices:
+          - surround
+          - list
+          - insert
+          - toggleGroup
+      prefix:
+        type: string
+      suffix:
+        type: string
+      lineMode:
+        type: enum
+        choices:
+          - inline
+          - multiline
+          - block
+      exampleText:
+        type: string
+      groupName:
+        type: string
+      startHidden:
+        type: boolean
+  default:
+    - name: big
+      svg_icon: font
+      title: "Big"
+      exampleText: "embiggened text"
+      action: surround
+      prefix: "<big>"
+      suffix: "</big>"
+      lineMode: inline
+    - name: checklist
+      svg_icon: list-check
+      title: "Checklist"
+      action: list
+      prefix: "* [ ] "
+      lineMode: multiline
+      exampleText: "checklist item"
+    - name: copyright
+      svg_icon: copyright
+      title: "Copyright"
+      action: insert
+      prefix: "©"
+    - name: deleted
+      svg_icon: highlighter
+      title: "Mark Deleted"
+      exampleText: "deleted text"
+      action: surround
+      prefix: "<del>"
+      suffix: "</del>"
+      lineMode: inline
+    - name: euro
+      svg_icon: euro-sign
+      title: "Euro"
+      action: insert
+      prefix: "€"
+    - name: footnote
+      svg_icon: asterisk
+      title: "Footnote"
+      exampleText: "footnote contents"
+      action: surround
+      prefix: "^["
+      suffix: "]"
+      lineMode: inline
+    - name: heading1
+      svg_icon: heading
+      title: "Heading1"
+      action: surround
+      prefix: "# "
+      suffix: ""
+      lineMode: inline
+      exampleText: "Heading 1"
+    - name: heading2
+      svg_icon: heading
+      title: "Heading2"
+      action: surround
+      prefix: "## "
+      suffix: ""
+      lineMode: inline
+      exampleText: "Heading 2"
+    - name: heading3
+      svg_icon: heading
+      title: "Heading3"
+      action: surround
+      prefix: "### "
+      suffix: ""
+      lineMode: inline
+      exampleText: "Heading 3"
+    - name: highlight
+      svg_icon: highlighter
+      title: "Highlight"
+      exampleText: "highlighted text"
+      action: surround
+      prefix: "<mark>"
+      suffix: "</mark>"
+      lineMode: inline
+    - name: imageLink
+      svg_icon: panorama
+      title: "Image via external URL"
+      action: surround
+      prefix: "<img src=\""
+      suffix: "\" alt=\"\">"
+      lineMode: inline
+      exampleText: "url-link-to-image"
+    - name: inserted
+      svg_icon: highlighter
+      title: "Mark Inserted"
+      exampleText: "inserted text"
+      action: surround
+      prefix: "<ins>"
+      suffix: "</ins>"
+      lineMode: inline
+    - name: keyboard
+      svg_icon: keyboard
+      title: "Keycaps Style"
+      exampleText: "keycapped text"
+      action: surround
+      prefix: "<kbd>"
+      suffix: "</kbd>"
+      lineMode: multiline
+    - name: registered
+      svg_icon: registered
+      title: "Registered"
+      action: insert
+      prefix: "®"
+    - name: ruby
+      svg_icon: gem
+      title: "Ruby/Furigana"
+      exampleText: "日本語<rp>(</rp><rt>にほんご</rt><rp>)</rp>"
+      action: surround
+      prefix: "<ruby>"
+      suffix: "</ruby>"
+      lineMode: inline
+    - name: shrug
+      nonIcon: "🤷"
+      title: "Shrug"
+      action: insert
+      prefix: "¯\\\\\\_(ツ)\\_/¯"
+    - name: small
+      svg_icon: font
+      title: "Small"
+      exampleText: "smallerfied text"
+      action: surround
+      prefix: "<small>"
+      suffix: "</small>"
+      lineMode: inline
+    - name: strike
+      svg_icon: strikethrough
+      title: "Strike-through"
+      exampleText: "struck-through text"
+      action: surround
+      prefix: "~~"
+      suffix: "~~"
+      lineMode: multiline
+    - name: subscript
+      svg_icon: subscript
+      title: "Subscript"
+      exampleText: "subscripted text"
+      action: surround
+      prefix: "<sub>"
+      suffix: "</sub>"
+      lineMode: inline
+    - name: superscript
+      svg_icon: superscript
+      title: "Superscript"
+      exampleText: "superscripted text"
+      action: surround
+      prefix: "<sup>"
+      suffix: "</sup>"
+      lineMode: inline
+    - name: toggleBonanza
+      svg_icon: cubes-stacked
+      title: "More Buttons"
+      popupHover: "Show/hide additional markup buttons in the toolbar"
+      action: toggleGroup
+      groupName: bonanza
+      startHidden: true
+    - name: trademark
+      svg_icon: trademark
+      title: "Trademark"
+      action: insert
+      prefix: "™"
+    - name: underline
+      svg_icon: underline
+      title: "Underline"
+      action: surround
+      prefix: "[u]"
+      suffix: "[/u]"
+      lineMode: inline
+      exampleText: "underlined text"
+    - name: yen
+      svg_icon: yen-sign
+      title: "Yen ¥"
+      action: insert
+      prefix: "¥"
+
+svg_icons:
+  type: list
+  list_type: compact
+  default: asterisk|copyright|cubes-stacked|euro-sign|font|gem|heading|highlighter|keyboard|list-check|panorama|registered|strikethrough|subscript|superscript|trademark|underline|yen-sign
+
+translations:
+  type: objects
+  schema:
+    name: locale
+    identifier: locale
+    properties:
+      locale:
+        type: string
+        required: true
+      translations:
+        type: objects
+        schema:
+          name: translation
+          identifier: key
+          properties:
+            key:
+              type: string
+              required: true
+            value:
+              type: string
+  default:
+    - locale: ja
+      translations:
+        - key: ruby.title
+          value: "ルビ/ふりがな"
+        - key: checklist.title
+          value: "チェックリスト"
+        - key: checklist.exampleText
+          value: "リスト項目"
+
+layout:
+  type: list
+  default: STYLES|underline|strike,,bonanza|superscript,,bonanza|subscript,,bonanza|big,,bonanza|small,,bonanza|keyboard,,bonanza|INSERTIONS|heading1,,bonanza|heading2,,bonanza|heading3,,bonanza|footnote|ruby,,bonanza|copyright,,bonanza|registered,,bonanza|trademark,,bonanza|euro,,bonanza|yen,,bonanza|shrug,,bonanza|imageLink,,bonanza|EXTRAS|D,checklist|M,checklist,,bonanza|highlight,,bonanza|inserted,,bonanza|deleted,,bonanza|GEARMENU|toggleBonanza

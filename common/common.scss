@@ -1,0 +1,25 @@
+// Import styling for the built-in button definitions.
+@import "builtin-buttons.scss";
+
+// You can add styling for your own custom buttons like so:
+//
+//
+// @import "_selectors.scss";
+//
+// .d-editor-button-bar {
+//     #{toolbar-button-selector(YOUR-BUTTON-NAME)} {
+//         ...
+//     }
+//     #{popup-button-selector(YOUR-BUTTON-NAME)} {
+//         ...
+//     }
+// }
+//
+//
+// The file "_selectors.scss" defines the two helper functions to generate
+// selectors given a button's name
+//
+// Note that styling could be doubled since buttons can be placed in two
+// different locations.  Hence, there is one selector for the toolbar, and
+// another for the gear-menu pop-up.  Aspects of the styling for the two
+// locations will likely have some differences.

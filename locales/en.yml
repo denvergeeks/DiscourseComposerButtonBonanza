@@ -1,0 +1,184 @@
+#
+#  This file is part of ComposerButtonBonanza.
+#
+#  Copyright 2025 Matt Marjanovic
+#
+#  ComposerButtonBonanza is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License as published
+#  by the Free Software Foundation; either version 3 of the License, or any
+#  later version.
+#
+#  ComposerButtonBonanza is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+#  Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License along
+#  with ComposerButtonBonanza.  If not, see <https://www.gnu.org/licenses/>.
+#
+en:
+  theme_metadata:
+    description: "Add a bonanza of buttons to the Composer toolbar!"
+    settings:
+      svg_icons:
+        label: SVG Icons
+        description: >-
+          List of all the <b>svg_icon</b>s specified in button definitions,
+          to ensure that icons are delivered to the browser.  (The server
+          does not know how to inspect into the <b>Buttons</b> setting, so
+          any icon values need to be duplicated here.)
+      layout:
+        label: Button Layout
+        description: >-
+          Define the layout for buttons.  Each entry specifies either a
+          <i>section</i> or a <i>button</i>.
+          <ul>
+          <li>Section entries specify the placement of the succeeding button
+          entries.  Valid section entries are <b>STYLES</b>, <b>INSERTIONS</b>,
+          <b>EXTRAS</b>, or <b>GEARMENU</b>.  The first three correspond to
+          sections of the toolbar; <b>GEARMENU</b> corresponds to the ⚙️ pop-up
+          menu.</li>
+          <li>Button entries have the form<br>
+          <code>[WHEN,]BUTTON,[SHORTCUT],[TOGGLE-GROUP]</code>
+          <ul>
+          <li><i>WHEN</i> - optional specifier of when this entry takes effect:
+          <ul>
+          <li><code>D</code> - desktop only;</li>
+          <li><code>M</code> - mobile only;</li>
+          <li><code>X</code> - always ignore this entry (as an alternative to
+          outright deleting the entry).</li>
+          </ul></li>
+          <li><i>BUTTON</i> - the name of a button defined in <b>Buttons</b>
+          </li>
+          <li><i>SHORTCUT</i> - optionally specify a keyboard shortcut for
+          the button, e.g., <code>shift-4</code></li>
+          <li><i>TOGGLE-GROUP</i> - optionally assign this button to a group
+          controlled by a <b>toggleGroup</b> button.</li>
+          </ul>
+          </ul>
+          Buttons are placed in entry-order; simply reorder the entries to
+          rearrange buttons.
+
+      translations:
+        label: Translations
+        description: >-
+          Localization of button parameters (locale-specific overrides of
+          parameters in button definitions)
+        schema:
+          properties:
+            locale:
+              label: Locale
+              description: >-
+                Locale identifier (e.g., "en", "ja", etc.)
+            translations:
+              label: Parameter Translations
+              description: >-
+                Translations for button parameters
+              schema:
+                properties:
+                  key:
+                    label: Key
+                    description: >-
+                      Parameter key, of the form
+                      <code>buttonName.parameter</code>.  Parameters which can
+                      be localized are:
+                      <code>nonIcon</code>,
+                      <code>title</code>,
+                      <code>prefix</code>,
+                      <code>suffix</code>,
+                      <code>exampleText</code>.
+
+      buttons:
+        label: Buttons
+        description: Button definitions
+        schema:
+          properties:
+            name:
+              label: Name
+              description: >-
+                Name/identifier for the button, used in defining the layout,
+                and also used in classes/attributes/etc on the button in the
+                HTML.
+            svg_icon:
+              label: Icon
+              description: >-
+                Icon to use for the button.  If not a Discourse "core" icon,
+                then this value must also be included in the
+                <b>SVG Icons</b> setting (otherwise the icon SVG will not
+                be delivered to the browser).
+            nonIcon:
+              label: Non-Icon
+              description: >-
+                Character(s) to use <i>instead</i> of an icon.  This only
+                applies to toolbar buttons, not pop-up menu options (which
+                always only use the <b>Icon</b> setting).
+                If specified, this will supersede the <b>Icon</b> setting.
+                There is only room for 1 glyph, but that can be an emoji.
+            title:
+              label: Title
+              description: >-
+                Title for the button.  For buttons placed in the
+                toolbar, this becomes the hover-text.  For buttons in the
+                pop-up menu, this is the label next to the icon.
+            popupHover:
+              label: Pop-up Hover Text
+              description: >-
+                For buttons placed in the pop-up menu, this is used as the
+                hover-text.  (If left empty, <b>Title</b> is reused instead.)
+            action:
+              label: Action
+              description: >-
+                Specify one of the following actions for the button:
+                <ul>
+                <li><b>surround</b> - surround the selected text with
+                <b>Prefix</b> and <b>Suffix</b></li>
+                <li><b>list</b> - create a list, prefixing each line
+                with <b>Prefix</b></li>
+                <li><b>insert</b> - simply insert the <b>Prefix</b> text
+                (replacing any selected text)</li>
+                <li><b>toggleGroup</b> - toggle the visibility of the group of
+                buttons named by <b>Group Name</b>.  (Hidden buttons still
+                exist; e.g., keyboard shortcuts still work.)</li>
+                </ul>
+                Each action requires different parameters, specified below.
+            prefix:
+              label: Prefix
+              description: >-
+                [<b>surround</b>, <b>list</b>, <b>insert</b>]
+                The prefix added to text.
+            suffix:
+              label: Suffix
+              description: >-
+                [<b>surround</b>]
+                The suffix added to text.
+            lineMode:
+              label: Line Mode
+              description: >-
+                [<b>surround</b>, <b>list</b>]
+                Specify treatment of selected text:
+                <ul>
+                <li><b>inline</b> - Action treated as inline transform;
+                linefeeds are ignored.</li>
+                <li><b>multiline</b> - Action is applied to each line
+                independently.</li>
+                <li><b>block</b> - Text is treated as a block; action is
+                applied to the entire block.</li>
+                </ul>
+                <b>list</b> buttons should typically use <b>multiline</b>.
+            exampleText:
+              label: Example Text
+              description: >-
+                [<b>surround</b>, <b>list</b>]
+                Example text inserted into the generated markup, if no text
+                region was already selected in composer textarea.
+            groupName:
+              label: Group Name
+              description: >-
+                [<b>toggleGroup</b>]
+                Specifies which group will be toggled by the button.
+            startHidden:
+              label: Group Starts Hidden
+              description: >-
+                [<b>toggleGroup</b>]
+                If enabled, then the group will start out hidden (i.e., not
+                visible until the first click of the toggle button).
