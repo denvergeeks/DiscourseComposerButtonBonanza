@@ -1,3 +1,5 @@
+This is the @denvergeeks version forked from https://codeberg.org/centertap/DiscourseComposerButtonBonanza
+
 # Composer Button Bonanza for Discourse
 
 ###  *"Composer Affordances that You Can Afford!"*
