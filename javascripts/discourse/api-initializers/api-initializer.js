@@ -348,13 +348,14 @@ function parseLayoutEntry(entry) {
 }
 
 
+// Parse layout into an abstract structure without viewport-dependent filtering.
+// Mobile/desktop decisions are deferred to onToolbarCreate (rendering time).
+//
 function parseLayout(api) {
     const result = {
         toolbar: [],
         gearmenu: [],
     };
-
-    const site = api.container.lookup("service:site");
 
     // Until a section is specified, toss buttons in the "extras" toolbar group.
     let currentSection = SECTIONS.EXTRAS;
@@ -372,12 +373,6 @@ function parseLayout(api) {
                    allowDesktop,
                    allowMobile} = parseLayoutEntry(entry);
 
-            // Skip entry if not wanted on this view.
-            if ((site.desktopView && !allowDesktop) ||
-                (!site.desktopView && !allowMobile)) {
-                continue;
-            }
-
             if (!(buttonSpec.name in BUTTONS)) {
                 throw new Error(`Unknown button: '${buttonSpec.name}'`);
             }
@@ -388,12 +383,22 @@ function parseLayout(api) {
                 TOGGLE_GROUPS[toggleGroup].push(buttonSpec);
             }
 
+            // Store placement info with allow flags; filtering happens at render time.
             switch (currentSection[0]) {
             case Place.TOOLBAR:
-                result.toolbar.push([currentSection[1], buttonSpec]);
+                result.toolbar.push({
+                    section: currentSection[1],
+                    buttonSpec,
+                    allowDesktop,
+                    allowMobile,
+                });
                 break;
             case Place.GEARMENU:
-                result.gearmenu.push(buttonSpec);
+                result.gearmenu.push({
+                    buttonSpec,
+                    allowDesktop,
+                    allowMobile,
+                });
                 break;
             default:
                 throw new Error(`Unknown placement type: ${currentSection[0]}`);
@@ -415,14 +420,6 @@ export default apiInitializer("1.13.0", (api) => {
     // the i18n keys/values which we will generate for our buttons.
     I18n.translations[I18n.currentLocale()].js.composer[CBBKEY] = i18nProperties;
 
-    // api.addComposerToolbarPopupMenuOption() does not seem to have any effect
-    // when called within an api.onToolbarCreate() callback.  So, we need to
-    // parse all the settings up-front, in order to define any pop-up buttons
-    // right now.  We cannot defer until toolbar-creation time.
-    //
-    // TODO(maddog) Somehow defer layout parsing/etc until actually needed
-    //              (e.g., first time a Composer is constructed?).
-
     // Re-express our 'buttons' setting as a map keyed on button name,
     // for easy lookup.
     BUTTONS = Object.fromEntries(settings.buttons.map((s) => [s.name, s]));
@@ -431,27 +428,44 @@ export default apiInitializer("1.13.0", (api) => {
     TRANSLATIONS = settings.translations.find(
         (t) => t.locale === I18n.currentLocale())?.translations;
 
-    // Parse our 'layout' setting.
+    // Parse our 'layout' setting (view-agnostic; no mobile/desktop checks yet).
+    // Mobile/desktop filtering is deferred to onToolbarCreate to satisfy the
+    // deprecation warning: site.mobileView / site.desktopView must only be
+    // accessed during rendering, not during static initialization.
     TOGGLE_GROUPS = {};
     let layout = parseLayout(api);
 
-    // Define gear-menu pop-up buttons (which get constructed/destroyed when
-    // the menu is opened/closed).
-    for (const buttonSpec of layout.gearmenu) {
-        try {
-            addPopupMenuButton(api, buttonSpec, i18nProperties);
-        } catch (error) {
-            console.error(CBBKEY, error);
-        }
-    }
-
     // Register a callback to define the toolbar buttons when the toolbar is
-    // eventually created.
+    // eventually created. This runs during rendering, so checking site.desktopView
+    // here is safe and complies with the deprecation guidance.
     api.onToolbarCreate(function(toolbar) {
-        for (const [toolbarGroup, buttonSpec] of layout.toolbar) {
+        const site = api.container.lookup("service:site");
+        const isDesktop = !!site.desktopView;
+
+        // Add toolbar buttons, filtering by mobile/desktop allowance at render time.
+        for (const entry of layout.toolbar) {
+            const { section, buttonSpec, allowDesktop, allowMobile } = entry;
+            // Skip entry if not wanted on this view.
+            if ((isDesktop && !allowDesktop) || (!isDesktop && !allowMobile)) {
+                continue;
+            }
             try {
-                addToolbarButton(toolbar, toolbarGroup, buttonSpec,
-                                 i18nProperties);
+                addToolbarButton(toolbar, section, buttonSpec, i18nProperties);
+            } catch (error) {
+                console.error(CBBKEY, error);
+            }
+        }
+
+        // Add gear-menu popup buttons at render time (instead of during init).
+        // This ensures site.desktopView access happens in the correct lifecycle.
+        for (const entry of layout.gearmenu) {
+            const { buttonSpec, allowDesktop, allowMobile } = entry;
+            // Skip entry if not wanted on this view.
+            if ((isDesktop && !allowDesktop) || (!isDesktop && !allowMobile)) {
+                continue;
+            }
+            try {
+                addPopupMenuButton(api, buttonSpec, i18nProperties);
             } catch (error) {
                 console.error(CBBKEY, error);
             }
