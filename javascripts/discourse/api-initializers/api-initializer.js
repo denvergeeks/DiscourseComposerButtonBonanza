@@ -311,6 +311,40 @@ function addPopupMenuButton(api, buttonSpec, i18nProperties) {
 }
 
 
+// Add a popup menu button with a condition callback that defers viewport checks
+// to menu display time (avoiding deprecation warning by not accessing site.mobileView/
+// desktopView during static initialization).
+//
+function addPopupMenuButtonWithCondition(api, buttonSpec, i18nProperties,
+                                         allowDesktop, allowMobile) {
+    const {icon, titleKey, elementId, action,
+           buttonName, definition
+          } = makeCommonButtonOptions(buttonSpec, i18nProperties);
+    const hoverKey = setI18nProperty(buttonName, "hover",
+                                     applyTranslation(definition.popupHover,
+                                                      buttonName, "popupHover"),
+                                     i18nProperties);
+    api.addComposerToolbarPopupMenuOption({
+        icon: icon,  // icon on menu entry
+        label: titleKey,  // text label (next to icon) on menu entry
+        title: hoverKey ? `composer.${hoverKey}` : titleKey,
+        name: name,  // data-name attribute (falls-back to label)
+        shortcut: buttonSpec.shortcut,
+        action: (toolbarEvent) => {
+            trimLeading(toolbarEvent.selected);
+            action(toolbarEvent);
+        },
+        // Condition callback is invoked at menu display time (render time),
+        // not during initialization, so accessing site.desktopView here is safe.
+        condition: (composer) => {
+            const site = composer.site;
+            const isDesktop = !!site.desktopView;
+            return (isDesktop && allowDesktop) || (!isDesktop && allowMobile);
+        },
+    });
+}
+
+
 // Parse a button entry from the layout array.  Entries have the format:
 //
 //     [when,]buttonName,[shortcut],[group]
@@ -428,12 +462,23 @@ export default apiInitializer("1.13.0", (api) => {
     TRANSLATIONS = settings.translations.find(
         (t) => t.locale === I18n.currentLocale())?.translations;
 
-    // Parse our 'layout' setting (view-agnostic; no mobile/desktop checks yet).
-    // Mobile/desktop filtering is deferred to onToolbarCreate to satisfy the
-    // deprecation warning: site.mobileView / site.desktopView must only be
-    // accessed during rendering, not during static initialization.
+    // Parse our 'layout' setting.
     TOGGLE_GROUPS = {};
     let layout = parseLayout(api);
+
+    // Define gear-menu popup buttons during initialization (required for menu registration).
+    // Use a condition callback to defer viewport checks to menu display time, avoiding
+    // the deprecation warning (site.mobileView/desktopView are accessed when menu is shown,
+    // not during static init).
+    for (const entry of layout.gearmenu) {
+        const { buttonSpec, allowDesktop, allowMobile } = entry;
+        try {
+            addPopupMenuButtonWithCondition(api, buttonSpec, i18nProperties, 
+                                           allowDesktop, allowMobile);
+        } catch (error) {
+            console.error(CBBKEY, error);
+        }
+    }
 
     // Register a callback to define the toolbar buttons when the toolbar is
     // eventually created. This runs during rendering, so checking site.desktopView
@@ -451,21 +496,6 @@ export default apiInitializer("1.13.0", (api) => {
             }
             try {
                 addToolbarButton(toolbar, section, buttonSpec, i18nProperties);
-            } catch (error) {
-                console.error(CBBKEY, error);
-            }
-        }
-
-        // Add gear-menu popup buttons at render time (instead of during init).
-        // This ensures site.desktopView access happens in the correct lifecycle.
-        for (const entry of layout.gearmenu) {
-            const { buttonSpec, allowDesktop, allowMobile } = entry;
-            // Skip entry if not wanted on this view.
-            if ((isDesktop && !allowDesktop) || (!isDesktop && !allowMobile)) {
-                continue;
-            }
-            try {
-                addPopupMenuButton(api, buttonSpec, i18nProperties);
             } catch (error) {
                 console.error(CBBKEY, error);
             }
