@@ -1,4 +1,3 @@
-//
 // This file is part of ComposerButtonBonanza.
 //
 // Copyright 2025 Matt Marjanovic
