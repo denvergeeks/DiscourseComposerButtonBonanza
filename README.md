@@ -1,4 +1,4 @@
-This is the @denvergeeks version forked from https://codeberg.org/centertap/DiscourseComposerButtonBonanza
+This is the @denvergeeks version cloned from https://codeberg.org/centertap/DiscourseComposerButtonBonanza [to correct  some errors appearing in the console in that codeberg.org repository version].
 
 # Composer Button Bonanza for Discourse
 
