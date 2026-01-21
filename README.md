@@ -1,5 +1,7 @@
 This is the @denvergeeks version cloned from https://codeberg.org/centertap/DiscourseComposerButtonBonanza [to correct  some errors appearing in the console in that codeberg.org repository version].
 
+Here is the commit log for these changes: https://github.com/denvergeeks/DiscourseComposerButtonBonanza/commit/b72bf451b073f784531e912663292dbfd8aeffa8
+
 # Composer Button Bonanza for Discourse
 
 ###  *"Composer Affordances that You Can Afford!"*
